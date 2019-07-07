@@ -1,35 +1,40 @@
 <template>
-  <div>
+  <div class="container">
     <p>{{ msg }}</p>
+    <FileUpload />
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
+import FileUpload from './FileUpload.vue';
 
 export default {
-  name: "Domain",
+  name: 'Domain',
   data() {
     return {
-      msg: ""
+      msg: '',
     };
+  },
+  components: {
+    FileUpload,
   },
   methods: {
     getMessage() {
-      const path = "http://localhost:5000/domains";
+      const path = 'http://localhost:5000/domains';
       axios
         .get(path)
-        .then(res => {
+        .then((res) => {
           this.msg = res.data;
         })
-        .catch(error => {
+        .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
         });
-    }
+    },
   },
   created() {
     this.getMessage();
-  }
+  },
 };
 </script>

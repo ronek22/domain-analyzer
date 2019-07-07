@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Domain from './components/Domain';
+import Domain from './components/Domain.vue';
 
 Vue.use(Router);
 
