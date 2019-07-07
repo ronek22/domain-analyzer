@@ -14,26 +14,25 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-  name: "FileUpload",
+  name: 'FileUpload',
   data() {
     return {
-      file: null
+      file: null,
     };
   },
   methods: {
     onSubmit() {
       const path = 'http://localhost:5000/domains';
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append('file', this.file);
       axios.post(path, formData)
-        .then(res => console.log("SUCCESS"))
+        .then(console.log('SUCCESS'))
         .catch(err => console.error(err));
-
-    }
-  }
+    },
+  },
   // methods: {
   //   onFileChange(e) {
   //     e.preventDefault();
