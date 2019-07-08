@@ -70,7 +70,6 @@ export default {
         .get(path)
         .then(res => {
           this.domains = res.data.domains;
-          console.log(this.domains);
         })
         .catch(error => {
           // eslint-disable-next-line

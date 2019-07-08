@@ -10,6 +10,7 @@
       ></b-form-file>
       <b-button type="submit" variant="primary">Submit</b-button>
     </b-form>
+    <h2>{{ processed }} / {{ total }}</h2>
     <v-progress-linear v-model="progressValue"></v-progress-linear>
   </div>
 </template>
@@ -22,12 +23,16 @@ export default {
   data() {
     return {
       file: null,
-      progressValue: 0
+      progressValue: 0,
+      processed: 0,
+      total: 1,
     };
   },
   methods: {
     update_progress(status_url) {
         axios.get(status_url).then((res) => {
+          this.processed = res.data.current;
+          this.total = res.data.total;
           this.progressValue = parseInt(
             (res.data.current * 100) / res.data.total
           );

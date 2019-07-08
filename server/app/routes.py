@@ -9,6 +9,7 @@ import validators
 import whois
 import time
 import errno
+import datetime
 
 
 @app.route('/domains', methods=["GET", "POST"])
@@ -94,6 +95,9 @@ def domain_whois(domain_name):
         w.creation_date) == list else w.creation_date
     exp_date = w.expiration_date[0] if type(
         w.expiration_date) == list else w.expiration_date
+
+    if (type(reg_date) == str and 'before' in reg_date):
+        reg_date = datetime.date(1996, 8, 1)
     return reg_date, exp_date
 
 
