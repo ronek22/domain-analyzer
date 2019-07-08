@@ -15,7 +15,7 @@
               @onclick="test"
               v-for="col in headers"
               :key="col.value"
-              class="text-xs-right"
+              class="text-xs-left"
               v-html="status_format(props.item[col.value], col.text)"
             ></td>
           </template>
@@ -36,10 +36,10 @@ export default {
     return {
       headers: [
         { text: "Id", value: "id", align: "left", sortable: true },
-        { text: "Domain", value: "name" },
-        { text: "Registartion Date", value: "registration_date" },
-        { text: "Expiration Date", value: "expiration_date" },
-        { text: "Checked?", value: "checked", sortable: false }
+        { text: "Domena", value: "name" },
+        { text: "Data rejestracji", value: "registration_date" },
+        { text: "Data wygaśnięcia", value: "expiration_date" },
+        { text: "Sprawodzona?", value: "checked", sortable: false }
       ],
       domains: [],
       totalItems: 0,
@@ -87,7 +87,7 @@ export default {
     },
     status_format(para, name) {
       let status_html = "";
-      if (name.includes("Date")) {
+      if (name.includes("Data")) {
         if (!para) return para;
         var newDate = new Date();
         newDate.setTime(para * 1000);

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <b-form inline @submit.prevent="onSubmit">
+    <b-form inline @submit.prevent="onSubmit" class="justify-content-center">
       <b-form-file
         accept=".csv, .txt"
         v-model="file"
@@ -8,10 +8,22 @@
         placeholder="Choose a file..."
         drop-placeholder="Drop file here..."
       ></b-form-file>
-      <b-button type="submit" variant="primary">Submit</b-button>
+      <div class="text-center">
+        <v-btn outline color="indigo" type="submit" @click="snackbar = true">Upload</v-btn>
+      </div>
     </b-form>
-    <!-- <h2>{{ processed }} / {{ total }}</h2> -->
-    <!-- <v-progress-linear v-model="progressValue"></v-progress-linear> -->
+
+    <v-snackbar
+      v-model="snackbar"
+      :color="color"
+      :multi-line="mode === 'multi-line'"
+      :timeout="timeout"
+      :vertical="mode === 'vertical'"
+      class="text-center"
+    >
+      {{ text }}
+      <v-btn dark flat @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -26,35 +38,65 @@ export default {
       progressValue: 0,
       processed: 0,
       total: 1,
+      snackbar: false,
+      color: "success",
+      mode: "multi-line",
+      timeout: 6000,
+      text: "Pomyślnie utworzono zadanie"
     };
   },
   methods: {
-    // update_progress(status_url) {
-    //     axios.get(status_url).then((res) => {
-    //       this.processed = res.data.current;
-    //       this.total = res.data.total;
-    //       this.progressValue = parseInt(
-    //         (res.data.current * 100) / res.data.total
-    //       );
-    //       if (res.data.state != "SUCCESS" && res.data.state != "FAILURE") {
-    //         setTimeout(this.update_progress.bind(null, status_url), 500);
-    //       } else {
-    //         console.log("SUCCESS");
-    //       }
-    //     });
-    // },
     onSubmit() {
       const path = "http://localhost:5000/domains";
       const formData = new FormData();
       formData.append("file", this.file);
       axios
         .post(path, formData)
-        .then((res) => {
+        .then(res => {
           console.log(res.headers.location);
-          // this.update_progress(res.headers.location);
         })
         .catch(err => console.error(err));
     }
   }
 };
 </script>
+
+
+<style scoped>
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
+}
+@-moz-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
