@@ -10,9 +10,9 @@
           :loading="loading"
         >
           <template v-slot:items="props">
-            <td class="text-xs-right">{{ props.item.id }}</td>
-            <td class="text-xs-right">{{ props.item.state }}</td>
-            <td class="text-xs-right">{{ props.item.current }} / {{props.item.total}}</td>
+            <td class="text-xs-left">{{ props.item.id }}</td>
+            <td class="text-xs-left">{{ props.item.state }}</td>
+            <td class="text-xs-left">{{ props.item.current }} / {{props.item.total}}</td>
             <!-- Maybe add start time -->
           </template>
         </v-data-table>

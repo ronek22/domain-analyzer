@@ -1,6 +1,6 @@
 from app import app, db
 from app.models import Domain
-from flask import jsonify, request, url_for
+from flask import jsonify, request, url_for, render_template
 from app import celery
 from retry import retry
 from sqlalchemy import desc
@@ -13,6 +13,11 @@ import errno
 import datetime
 
 celeryInspect = celery.control.inspect(['celery@ronek22Linux'])
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def render_vue(path):
+    return render_template('index.html')
 
 @app.route('/domains', methods=["GET", "POST"])
 def get_domains():
