@@ -2,6 +2,7 @@
   <v-app>
     <v-tabs fixed-tabs>
       <v-tab to="/domains">Domains</v-tab>
+      <v-tab to="/tasks">Tasks</v-tab>
     </v-tabs>
     <router-view></router-view>
   </v-app>

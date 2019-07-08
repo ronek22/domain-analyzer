@@ -1,8 +1,9 @@
 from app import app, db
 from app.models import Domain
 from flask import jsonify, request, url_for
-import celery
+from app import celery
 from retry import retry
+from sqlalchemy import desc
 import io
 import csv
 import validators
@@ -11,6 +12,7 @@ import time
 import errno
 import datetime
 
+celeryInspect = celery.control.inspect(['celery@ronek22Linux'])
 
 @app.route('/domains', methods=["GET", "POST"])
 def get_domains():
@@ -29,39 +31,87 @@ def get_domains():
         return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
 
     else:
-        db_domains = Domain.query.all()
+        rows = int(request.args.get('rows', 10))
+        page = int(request.args.get('page', 1))
+        sort = parse_sort(request.args.get('sort', 'id'))
+        descending = parse_bool(request.args.get('desc', 'false'))
+
+
+        print(rows, page, sort, descending)
+
+
+        if descending is None or sort is None:
+            db_domains = Domain.query.paginate(page, rows, False).items
+        elif descending:
+            db_domains = Domain.query.order_by(desc(sort)).paginate(page, rows, False).items
+        else:
+            db_domains = Domain.query.order_by(sort).paginate(page, rows, False).items
+
         db_domains = [x.serialize for x in db_domains]
         response_object['domains'] = db_domains
+        response_object['total'] = len(Domain.query.all())
     return jsonify(response_object)
 
-@app.route('/status/<task_id>')
+def parse_sort(value):
+    if value=='null':
+        return None
+    else:
+        return value
+
+def parse_bool(value):
+    if value=='true':
+        return True
+    elif value=='false':
+        return False
+    else:
+        return None
+
+@app.route('/status', methods=["GET"])
+def get_tasks():
+    response_object = {'status': 'success'}
+    active_tasks = celeryInspect.active()['celery@ronek22Linux']
+    active_ids = [x['id'] for x in active_tasks]
+    tasks = []
+    for id in active_ids:
+        tasks.append(taskstatus(id))
+
+    response_object['tasks'] = tasks
+
+    return jsonify(response_object)
+
 def taskstatus(task_id):
     task = loop_through_domains.AsyncResult(task_id)
     if task.state == 'PENDING':
         response = {
+            'id': task_id,
             'state': task.state,
             'current': 0,
             'total': 1,
-            'status': 'Pending...'
+            'status': 'Pending...',
         }
     elif task.state != 'FAILURE':
         response = {
+            'id': task_id,
             'state': task.state,
             'current': task.info.get('current', 0),
             'total': task.info.get('total', 1),
-            'status': task.info.get('status', '')
+            'status': task.info.get('status', ''),
+
         }
         if 'result' in task.info:
             response['result'] = task.info['result']
     else:
         # something must go wrong
         response = {
+            'id': task_id,
             'state': task.state,
             'current': 1,
             'total': 1,
-            'status': str(task.info)
+            'status': str(task.info),
+
         }
-    return jsonify(response)
+    return response
+
 
 
 @celery.task(bind=True)
@@ -79,8 +129,12 @@ def loop_through_domains(self, domains):
 def process_domain(domain_name):
     print(domain_name)
     if Domain.query.filter_by(name=domain_name).first() is None:
+        print(f"{domain_name} not in db")
         try:
             reg_date, exp_date = domain_whois(domain_name)
+            
+            if (type(reg_date) == str or type(exp_date) == str): return
+
             db.session.add(Domain(name=domain_name, registration_date=reg_date,
                                   expiration_date=exp_date, checked=True))
             db.session.commit()

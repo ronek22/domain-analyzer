@@ -10,8 +10,8 @@
       ></b-form-file>
       <b-button type="submit" variant="primary">Submit</b-button>
     </b-form>
-    <h2>{{ processed }} / {{ total }}</h2>
-    <v-progress-linear v-model="progressValue"></v-progress-linear>
+    <!-- <h2>{{ processed }} / {{ total }}</h2> -->
+    <!-- <v-progress-linear v-model="progressValue"></v-progress-linear> -->
   </div>
 </template>
 
@@ -29,20 +29,20 @@ export default {
     };
   },
   methods: {
-    update_progress(status_url) {
-        axios.get(status_url).then((res) => {
-          this.processed = res.data.current;
-          this.total = res.data.total;
-          this.progressValue = parseInt(
-            (res.data.current * 100) / res.data.total
-          );
-          if (res.data.state != "SUCCESS" && res.data.state != "FAILURE") {
-            setTimeout(this.update_progress.bind(null, status_url), 500);
-          } else {
-            console.log("SUCCESS");
-          }
-        });
-    },
+    // update_progress(status_url) {
+    //     axios.get(status_url).then((res) => {
+    //       this.processed = res.data.current;
+    //       this.total = res.data.total;
+    //       this.progressValue = parseInt(
+    //         (res.data.current * 100) / res.data.total
+    //       );
+    //       if (res.data.state != "SUCCESS" && res.data.state != "FAILURE") {
+    //         setTimeout(this.update_progress.bind(null, status_url), 500);
+    //       } else {
+    //         console.log("SUCCESS");
+    //       }
+    //     });
+    // },
     onSubmit() {
       const path = "http://localhost:5000/domains";
       const formData = new FormData();
@@ -51,7 +51,7 @@ export default {
         .post(path, formData)
         .then((res) => {
           console.log(res.headers.location);
-          this.update_progress(res.headers.location);
+          // this.update_progress(res.headers.location);
         })
         .catch(err => console.error(err));
     }

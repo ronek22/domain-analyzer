@@ -16,5 +16,4 @@ celery = Celery(app.name, backend='redis', broker=app.config['CELERY_BROKER_URL'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-print(app.config['CELERY_BROKER_URL'])
 from app import routes, models
