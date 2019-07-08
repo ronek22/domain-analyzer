@@ -56,7 +56,7 @@ export default {
   watch: {
     pagination: {
       async handler() {
-        const path = "http://localhost:5000/domains";
+        const path = "http://51.75.249.84:5000/domains";
         const rowsPerPage = this.pagination.rowsPerPage;
         const pageNumber = this.pagination.page;
         const sortBy = this.pagination.sortBy;
