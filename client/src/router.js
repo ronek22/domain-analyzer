@@ -13,7 +13,6 @@ export default new Router({
       path: '/',
       name: 'Domain',
       component: Domain,
-      alias: '/domains'
     },
     {
       path: '/tasks',

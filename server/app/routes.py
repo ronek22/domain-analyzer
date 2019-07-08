@@ -12,7 +12,7 @@ import time
 import errno
 import datetime
 
-celeryInspect = celery.control.inspect(['celery@ronek22Linux'])
+celeryInspect = celery.control.inspect(['celery@vps688706'])
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
