@@ -16,6 +16,8 @@
 <script>
 import axios from "axios";
 
+
+
 export default {
   name: "FileUpload",
   data() {
@@ -24,6 +26,7 @@ export default {
     };
   },
   methods: {
+
     onSubmit() {
       const path = "http://localhost:5000/domains";
       const formData = new FormData();

@@ -3,7 +3,8 @@ from app import db
 def dump_datetime(value):
     if value is None:
         return None
-    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+    # return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+    return value.timestamp()
 
 class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,8 +19,8 @@ class Domain(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'registration_date': self.registration_date,
-            'expiration_date': self.expiration_date,
+            'registration_date': dump_datetime(self.registration_date),
+            'expiration_date': dump_datetime(self.expiration_date),
             'checked': self.checked
         }
 
