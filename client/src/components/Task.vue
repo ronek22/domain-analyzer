@@ -46,7 +46,7 @@ export default {
   methods: {
     getTasks() {
         this.loading = true;
-      const path = "http://51.75.249.84:5000/status";
+      const path = "/status";
       axios.get(path).then(res => {
         this.tasks = res.data.tasks;
         this.loading=false;

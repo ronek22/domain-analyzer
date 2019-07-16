@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     onSubmit() {
-      const path = "http://51.75.249.84:5000/domains";
+      const path = "/domains";
       const formData = new FormData();
       formData.append("file", this.file);
       axios
