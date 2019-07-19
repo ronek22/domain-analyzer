@@ -5,9 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from celery import Celery
 
-DEBUG = True
-
-app = Flask(__name__)
+DEBUG = False
+app = Flask(__name__, static_folder='../templates/static', template_folder='../templates')
 app.config.from_object(Config)
 CORS(app, resources={r'/*': {'origins': '*'}}, expose_headers='Location')
 celery = Celery(app.name, backend='redis', broker=app.config['CELERY_BROKER_URL'])

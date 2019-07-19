@@ -10,10 +10,9 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/domains',
+      path: '/',
       name: 'Domain',
       component: Domain,
-      alias: '/'
     },
     {
       path: '/tasks',

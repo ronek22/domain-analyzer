@@ -56,7 +56,7 @@ export default {
   watch: {
     pagination: {
       async handler() {
-        const path = "http://localhost:5000/domains";
+        const path = "/domains";
         const rowsPerPage = this.pagination.rowsPerPage;
         const pageNumber = this.pagination.page;
         const sortBy = this.pagination.sortBy;
@@ -108,22 +108,6 @@ export default {
       return status_html;
     },
 
-    // getDomains() {
-    //   const path = "http://localhost:5000/domains";
-    //   axios
-    //     .get(path)
-    //     .then(res => {
-    //       this.domains = res.data.domains;
-    //     })
-    //     .catch(error => {
-    //       // eslint-disable-next-line
-    //       console.error(error);
-    //     });
-    // }
   },
-
-  // created() {
-  //   this.getDomains();
-  // }
 };
 </script>
