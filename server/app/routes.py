@@ -12,7 +12,7 @@ import time
 import errno
 import datetime
 
-celeryInspect = celery.control.inspect(['celery@vps688706'])
+celeryInspect = celery.control.inspect(['celery@ronek22.me'])
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -33,7 +33,7 @@ def get_domains():
 
         # START BACKGROUND JOB
         task = loop_through_domains.apply_async([list_of_domains])
-        return jsonify({}), 202, {'Location': url_for('taskstatus', task_id=task.id)}
+        return jsonify(response_object), 202
 
     else:
         rows = int(request.args.get('rows', 10))
@@ -74,7 +74,7 @@ def parse_bool(value):
 @app.route('/status', methods=["GET"])
 def get_tasks():
     response_object = {'status': 'success'}
-    active_tasks = celeryInspect.active()['celery@ronek22Linux']
+    active_tasks = celeryInspect.active()['celery@ronek22.me']
     active_ids = [x['id'] for x in active_tasks]
     tasks = []
     for id in active_ids:
