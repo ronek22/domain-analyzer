@@ -14,10 +14,12 @@ import datetime
 
 celeryInspect = celery.control.inspect(['celery@ronek22.me'])
 
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def render_vue(path):
     return render_template('index.html')
+
 
 @app.route('/domains', methods=["GET", "POST"])
 def get_domains():
@@ -41,35 +43,47 @@ def get_domains():
         sort = parse_sort(request.args.get('sort', 'id'))
         descending = parse_bool(request.args.get('desc', 'false'))
 
-
         print(rows, page, sort, descending)
 
+        start = time.time()
 
         if descending is None or sort is None:
             db_domains = Domain.query.paginate(page, rows, False).items
         elif descending:
-            db_domains = Domain.query.order_by(desc(sort)).paginate(page, rows, False).items
+            db_domains = Domain.query.order_by(
+                desc(sort)).paginate(page, rows, False).items
         else:
-            db_domains = Domain.query.order_by(sort).paginate(page, rows, False).items
+            db_domains = Domain.query.order_by(
+                sort).paginate(page, rows, False).items
+        elapsed_paginate = time.time() - start
 
+        start = time.time()
         db_domains = [x.serialize for x in db_domains]
+        elapsed_serialization = time.time() - start
         response_object['domains'] = db_domains
-        response_object['total'] = len(Domain.query.all())
+        start = time.time()
+        response_object['total'] = Domain.query.count()
+        elapsed_total = time.time() - start
+
+        print(f"PAGINATE: {elapsed_paginate}\tSERIALIZATION={elapsed_serialization}\tTOTAL={elapsed_total}\n\n", flush=True)
     return jsonify(response_object)
 
+
 def parse_sort(value):
-    if value=='null':
+    if value == 'null':
         return None
     else:
         return value
 
+
 def parse_bool(value):
-    if value=='true':
+    if value == 'true':
         return True
-    elif value=='false':
+    elif value == 'false':
         return False
     else:
         return None
+
 
 @app.route('/status', methods=["GET"])
 def get_tasks():
@@ -83,6 +97,7 @@ def get_tasks():
     response_object['tasks'] = tasks
 
     return jsonify(response_object)
+
 
 def taskstatus(task_id):
     task = loop_through_domains.AsyncResult(task_id)
@@ -118,7 +133,6 @@ def taskstatus(task_id):
     return response
 
 
-
 @celery.task(bind=True)
 def loop_through_domains(self, domains):
     """Background task for checking all domains from the file"""
@@ -137,8 +151,9 @@ def process_domain(domain_name):
         print(f"{domain_name} not in db")
         try:
             reg_date, exp_date = domain_whois(domain_name)
-            
-            if (type(reg_date) == str or type(exp_date) == str): return
+
+            if (type(reg_date) == str or type(exp_date) == str):
+                return
 
             db.session.add(Domain(name=domain_name, registration_date=reg_date,
                                   expiration_date=exp_date, checked=True))
@@ -158,5 +173,3 @@ def domain_whois(domain_name):
     if (type(reg_date) == str and 'before' in reg_date):
         reg_date = datetime.date(1996, 8, 1)
     return reg_date, exp_date
-
-
