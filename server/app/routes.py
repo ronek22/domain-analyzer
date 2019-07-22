@@ -57,15 +57,9 @@ def get_domains():
                 sort).paginate(page, rows, False).items
         elapsed_paginate = time.time() - start
 
-        start = time.time()
         db_domains = [x.serialize for x in db_domains]
-        elapsed_serialization = time.time() - start
         response_object['domains'] = db_domains
-        start = time.time()
         response_object['total'] = Domain.query.count()
-        elapsed_total = time.time() - start
-
-        print(f"PAGINATE: {elapsed_paginate}\tSERIALIZATION={elapsed_serialization}\tTOTAL={elapsed_total}\n\n", flush=True)
     return jsonify(response_object)
 
 
