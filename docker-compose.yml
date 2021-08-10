@@ -1,0 +1,33 @@
+version: '3'
+services:
+  redis:
+    image: "redis:alpine"
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=domains_analyzer
+      - POSTGRES_USER=hello_flask
+      - POSTGRES_PASSWORD=hello_flask
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
+  backend: &backend
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server:/code
+    ports:
+      - "5000:5000"
+    env_file:
+      ./server/.flaskenv
+    depends_on:
+      - redis
+      - db
+
+  celery:
+    <<: *backend
+    ports: []
+    command: celery worker -A app.celery --loglevel=info -n test
+

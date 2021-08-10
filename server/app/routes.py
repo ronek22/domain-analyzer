@@ -12,7 +12,8 @@ import time
 import errno
 import datetime
 
-celeryInspect = celery.control.inspect(['celery@ronek22.me'])
+CELERY_WORKER = f"celery@{app.config.get('CELERY_WORKER')}"
+celeryInspect = celery.control.inspect([CELERY_WORKER])
 
 
 @app.route('/', defaults={'path': ''})
@@ -82,14 +83,17 @@ def parse_bool(value):
 @app.route('/status', methods=["GET"])
 def get_tasks():
     response_object = {'status': 'success'}
-    active_tasks = celeryInspect.active()['celery@ronek22.me']
-    active_ids = [x['id'] for x in active_tasks]
-    tasks = []
-    for id in active_ids:
-        tasks.append(taskstatus(id))
+    print(f"Active tasks: {celeryInspect.active()[CELERY_WORKER]}")
+    active_tasks = celeryInspect.active()[CELERY_WORKER]
+    if active_tasks:
+        active_ids = [x['id'] for x in active_tasks]
+        tasks = []
+        for id in active_ids:
+            tasks.append(taskstatus(id))
 
-    response_object['tasks'] = tasks
-
+        response_object['tasks'] = tasks
+    else:
+        response_object['tasks'] = []
     return jsonify(response_object)
 
 
